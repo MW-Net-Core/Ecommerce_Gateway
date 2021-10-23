@@ -43,6 +43,8 @@ namespace Ecommerce_UserManagment.Controllers
                 var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim("UserId",user.Id),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
 
@@ -91,6 +93,7 @@ namespace Ecommerce_UserManagment.Controllers
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
 
+
         [HttpPost]
         [Route("register-admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
@@ -121,5 +124,6 @@ namespace Ecommerce_UserManagment.Controllers
 
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
+
     }
 }

@@ -48,7 +48,7 @@ namespace Ecommerce_UserManagment
 
             // For Entity Framework
             // highlighted area
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ConnectionStrings")));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             // For Identity  
             services.AddIdentity<ApplicationUser, IdentityRole>()
