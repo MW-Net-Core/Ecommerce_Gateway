@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Ecommerce_Gateway.Utilities;
 
 namespace Ecommerce_Gateway
 {
@@ -32,6 +33,14 @@ namespace Ecommerce_Gateway
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ecommerce_Gateway", Version = "v1" });
             });
+
+            services.AddTransient<IConfigurationServices, ConfigurationServices>();
+            services.AddTransient<IHttpService, HttpService>();
+            services.AddHttpClient();
+
+            //services.AddTransient<IHttpClientBuilder>
+                
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

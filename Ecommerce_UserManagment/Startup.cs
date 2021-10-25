@@ -44,10 +44,9 @@ namespace Ecommerce_UserManagment
                 for bearer token
              */
 
-
-
             // For Entity Framework
             // highlighted area
+
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             // For Identity  
@@ -58,15 +57,14 @@ namespace Ecommerce_UserManagment
             //adding authentication
             services.AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                var scheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = scheme;
+                options.DefaultChallengeScheme = scheme;
+                options.DefaultScheme = scheme;
             })
 
-
-
-          // Adding Jwt Bearer 
-          .AddJwtBearer(options =>
+           // Adding Jwt Bearer 
+          . AddJwtBearer(options =>
              {
                  options.SaveToken = true;
                  options.RequireHttpsMetadata = false;
@@ -79,8 +77,6 @@ namespace Ecommerce_UserManagment
                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
                  };
              });
-
-
 
             /*
                 custom code above
