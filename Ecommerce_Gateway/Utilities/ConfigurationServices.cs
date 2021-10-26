@@ -42,11 +42,17 @@ namespace Ecommerce_Gateway.Utilities
             }
         }
 
+        /// <summary>
+        /// Returns IConfiguration instance
+        /// </summary>
+
+        public IConfiguration Configuration { get; }
 
 
-        public IConfiguration Configuration => throw new NotImplementedException();
-
-        public IHttpContextAccessor HttpContextAccessor => throw new NotImplementedException();
+        /// <summary>
+        /// Returnas Context Accessor to use HttpContext 
+        /// </summary>
+        public IHttpContextAccessor HttpContextAccessor { get; }
 
         public Uri UserMangementBaseUri
         {
@@ -56,6 +62,8 @@ namespace Ecommerce_Gateway.Utilities
                 return new Uri(uri);
             }
         }
+
+        public string Authenticate => $"{UserMangementBaseUri}{_config.GetValue<string>("AppSettings:ApiEndpoints:Authenticate")}";
 
     }
 }

@@ -1,26 +1,42 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
+using System.Net.Http.Headers;
 
 namespace Ecommerce_Gateway.Utilities
 {
     public class HttpService : IHttpService
     {
-        private HttpClient _httpClient;
+        private HttpClient _client;
 
-        
-        public HttpClient InitializeConfiguration(IHttpClientFactory clientfactory)
+
+        public HttpClient InitializeConfiguration(IHttpClientFactory clientFactory)
         {
-            _httpClient = clientfactory.CreateClient();
-            return _httpClient;
+            _client = clientFactory.CreateClient();
+            return _client;
         }
 
-        public void SetAuthorizationHeadersForHttpClients(IHttpContextAccessor httpContextAccessor)
+
+        public void SetAuthorizationHeaderForHttpClient(IHttpContextAccessor httpContextAccessor)
         {
-            throw new NotImplementedException();
+            if (httpContextAccessor != null && httpContextAccessor.HttpContext != null)
+            {
+                httpContextAccessor.HttpContext.Request.Headers.TryGetValue("Authorization", out Microsoft.Extensions.Primitives.StringValues authorizationHeader);
+
+                httpContextAccessor.HttpContext.Request.Headers.TryGetValue("currentOrganizationId", out Microsoft.Extensions.Primitives.StringValues currentOrganizationHeader);
+
+                if (!string.IsNullOrEmpty(authorizationHeader))
+                {
+                    var token = authorizationHeader.ToString().Replace("Bearer ", string.Empty, StringComparison.OrdinalIgnoreCase);
+
+                    _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
+
+                if (!string.IsNullOrEmpty(currentOrganizationHeader))
+                {
+                    _client.DefaultRequestHeaders.Add("CurrentOrganizationId", currentOrganizationHeader.ToString());
+                }
+            }
         }
     }
 }

@@ -16,14 +16,26 @@ namespace Ecommerce_Gateway.Controller
     [ApiController]
     public class AccountController : ControllerBase
     {
-        IConfigurationServices _config;
-        HttpClient _http;
-        
+        private readonly IConfigurationServices _config;
+        private readonly HttpClient _http;
 
-        public AccountController(IConfigurationServices config,  HttpClient http)
+
+        public AccountController(
+           IHttpClientFactory clientFactory,
+           IConfigurationServices configurationService,
+           IHttpContextAccessor httpContextAccessor,
+           IHttpService httpServiceExtensions
+           )
         {
-            _config = config;
-            _http = http;
+            _config = configurationService;
+
+            // Note: Below code initializes the HttpClient, ConfigurationService and setup the custom Authorization header for HttpClient
+            if (httpServiceExtensions != null)
+            {
+
+                _http = httpServiceExtensions.InitializeConfiguration(clientFactory);
+                httpServiceExtensions.SetAuthorizationHeaderForHttpClient(httpContextAccessor);
+            }
         }
 
         [HttpPost]
@@ -32,21 +44,26 @@ namespace Ecommerce_Gateway.Controller
 
             using (_http)
             {
-                _http.BaseAddress = new Uri(_config.UserMangementBaseUri.ToString());   // path to send the post data
+                _http.BaseAddress = new Uri(_config.Authenticate);   // path to send the post data
+                _http.DefaultRequestHeaders.Accept.Clear();
                 _http.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));    // data type must be json what to send
 
                 if (reg.Password.Equals(reg.ConfirmPassword))   //checking password
                 {
-                    var payload = new Dictionary<string, string>
-                    {
-                      {"UserName", reg.UserName},
-                      {"Email", reg.Email},
-                      {"Password", reg.Password}
-                    };
+                    #region // Deprecated
+                    //var payload = new Dictionary<string, string>
+                    //{
+                    //  {"UserName", reg.UserName},
+                    //  {"Email", reg.Email},
+                    //  {"Password", reg.Password}
+                    //};
 
-                    string strPayload = JsonConvert.SerializeObject(payload);   // data conversion to json
-                    HttpContent c = new StringContent(strPayload, Encoding.UTF8, "application/json");
-                    var result = await _http.PostAsync("/Authenticate/Register", c);   //await used as its async (hit on register method of usermanagement service which gives a response)
+                    //string strPayload = JsonConvert.SerializeObject(payload);   // data conversion to json
+                    //HttpContent c = new StringContent(strPayload, Encoding.UTF8, "application/json");
+                    #endregion
+
+
+                    var result = await _http.PostAsync("Register", reg.AsJson());   //await used as its async (hit on register method of usermanagement service which gives a response)
                 
                     if(result.IsSuccessStatusCode)
                     {
@@ -63,24 +80,7 @@ namespace Ecommerce_Gateway.Controller
                 {
                     return new Response { status = "Error", message = "Password Does not match" }; 
                 }
-
             }
-
-
-
-
-            
-
         }
-
-
-
-
-
-
-
-
-
-
     }
 }

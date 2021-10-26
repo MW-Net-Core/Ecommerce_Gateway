@@ -1,16 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http.Features;
 using Ecommerce_Gateway.Utilities;
 
 namespace Ecommerce_Gateway
@@ -27,19 +22,61 @@ namespace Ecommerce_Gateway
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            #region //Allow origin
+            //var baseUrl = Configuration.GetValue<string>("AppSettings:WebBaseUri");
+
+            //services.AddCors(options =>
+            //{
+            //    options.AddDefaultPolicy(
+            //        builder =>
+            //        {
+            //            builder.WithOrigins(baseUrl)
+            //                                .AllowAnyHeader()
+            //                                .AllowAnyOrigin()
+            //                                .AllowAnyMethod();
+            //        });
+
+            //    options.AddPolicy("AnotherPolicy",
+            //    builder =>
+            //    {
+            //        builder.WithOrigins(baseUrl)
+            //                            .AllowAnyHeader()
+            //                            .AllowAnyOrigin()
+            //                            .AllowAnyMethod();
+            //    });
+            //});
+            #endregion
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ecommerce_Gateway", Version = "v1" });
             });
-
+            services.AddHttpContextAccessor();
             services.AddTransient<IConfigurationServices, ConfigurationServices>();
             services.AddTransient<IHttpService, HttpService>();
             services.AddHttpClient();
 
-            //services.AddTransient<IHttpClientBuilder>
-                
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(new ProducesAttribute("application/json"));
+                //options.Filters.Add(new AuditLoggingFilter());
+            })
+                .AddNewtonsoftJson()
+                .AddJsonOptions(opt =>
+                {
+                    opt.JsonSerializerOptions.PropertyNamingPolicy = null;
+                });
+
+            services.AddControllers().AddNewtonsoftJson();
+
+            // Note: Added to allow image file uploading
+            services.Configure<FormOptions>(o =>
+            {
+                o.ValueLengthLimit = int.MaxValue;
+                o.MultipartBodyLengthLimit = int.MaxValue;
+                o.MemoryBufferThreshold = int.MaxValue;
+            });
 
         }
 
@@ -58,7 +95,7 @@ namespace Ecommerce_Gateway
             app.UseRouting();
 
             app.UseAuthorization();
-
+            app.UseCors();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

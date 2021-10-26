@@ -13,5 +13,6 @@ namespace Ecommerce_Gateway.Utilities
         IHttpContextAccessor HttpContextAccessor { get; } 
         Uri UserMangementBaseUri { get; }
         Guid UserLoggedInId { get; }
+        string Authenticate { get; }
     }
 }

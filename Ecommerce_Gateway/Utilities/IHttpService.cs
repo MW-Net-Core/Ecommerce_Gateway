@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce_Gateway.Utilities
 {
-    interface IHttpService
+   public interface IHttpService
     {
         HttpClient InitializeConfiguration(IHttpClientFactory clientfactory);
-        void SetAuthorizationHeadersForHttpClients(IHttpContextAccessor httpContextAccessor);
+        void SetAuthorizationHeaderForHttpClient(IHttpContextAccessor httpContextAccessor);
     }
 }
