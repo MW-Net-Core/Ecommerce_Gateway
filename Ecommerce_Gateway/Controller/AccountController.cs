@@ -38,14 +38,14 @@ namespace Ecommerce_Gateway.Controller
             }
         }
 
-        [HttpPost]
+        [HttpPost("Register")]
         public async Task<Response> Register(Register reg)
         {
 
-            using (_http)
+            using (_http) //client's object which is making a request which is furture responsed
             {
                 _http.BaseAddress = new Uri(_config.Authenticate);   // path to send the post data
-                _http.DefaultRequestHeaders.Accept.Clear();
+                _http.DefaultRequestHeaders.Accept.Clear(); //not necessary in registers case it's a safe check
                 _http.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));    // data type must be json what to send
 
                 if (reg.Password.Equals(reg.ConfirmPassword))   //checking password
@@ -64,13 +64,14 @@ namespace Ecommerce_Gateway.Controller
 
 
                     var result = await _http.PostAsync("Register", reg.AsJson());   //await used as its async (hit on register method of usermanagement service which gives a response)
-                
-                    if(result.IsSuccessStatusCode)
+
+                    if (result.IsSuccessStatusCode)
                     {
                         var response = await result.Content.ReadAsStringAsync();    //get data from user managment api on successfully registration of the user
-                        return new Response { status = "Sucess" , message = "Client registered sucessfully" };
+                        return new Response { status = "Sucess", message = "Client registered sucessfully" };
 
-                    } else
+                    }
+                    else
                     {
                         return new Response { status = "Error", message = "Client not registered sucessfully" };
                     }
@@ -78,9 +79,51 @@ namespace Ecommerce_Gateway.Controller
                 }
                 else  //password doesn't matched
                 {
-                    return new Response { status = "Error", message = "Password Does not match" }; 
+                    return new Response { status = "Error", message = "Password Does not match" };
                 }
             }
         }
+
+
+        [HttpPost("Login")]
+        public async Task<Response> Login(Login Log)
+        {
+            using (_http)
+            {
+                _http.BaseAddress = new Uri(_config.Authenticate);  // authentication ka main controller hai
+                _http.DefaultRequestHeaders.Accept.Clear(); // must need header due to caching filled with values so clear those values
+                _http.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));    // data type must be json what to send
+
+
+
+                if (!(Log.UserName.Equals("") || Log.Password.Equals("")))
+                {
+                    //sending data to the Login in UserManagment service
+                    //send http post request to http client
+                    //send to the url must be appended
+                    //parse model to json
+                    var result = await _http.PostAsync("Login", Log.AsJson());
+
+
+                    // if case is right
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var response = result.Content.ReadAsStringAsync();//read the response send by the usermanagent api
+                        return new Response { status = "Succes", message = response.ToString() };   // required token here
+                    }
+                    //if case is some issue
+                    else
+                    {
+                        return new Response { status = "Error", message = "Not Logged In Successfully" };
+                    }
+                }
+                else
+                {
+                    return new Response { status = "Error", message = "Username of Password Must not be empty" };
+                }
+            }
+
+        }
+
     }
 }
