@@ -65,6 +65,9 @@ namespace Ecommerce_Gateway.Controller
 
                     var result = await _http.PostAsync("Register", reg.AsJson());   //await used as its async (hit on register method of usermanagement service which gives a response)
 
+                    //the above 2 cases AsJson converting c# obj to json
+
+                    
                     if (result.IsSuccessStatusCode)
                     {
                         var response = await result.Content.ReadAsStringAsync();    //get data from user managment api on successfully registration of the user

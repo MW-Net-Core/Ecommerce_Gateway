@@ -63,6 +63,7 @@ namespace Ecommerce_UserManagment.Controllers
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                     );
 
+                //throwing the responsein the case of correct log in
                 return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
@@ -124,6 +125,55 @@ namespace Ecommerce_UserManagment.Controllers
 
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
+
+
+        [HttpPost]
+        [Route("add-role")]
+        public async Task<IActionResult> AddRole([FromBody] RoleModel roleModel)
+        {
+            Guid id = Guid.NewGuid();
+            bool exists = await roleManager.RoleExistsAsync(roleModel.RoleName);
+            if (!exists)
+            {
+                var role = new IdentityRole
+                {
+                    Id = id.ToString(),
+                    Name = roleModel.RoleName,
+                    NormalizedName = roleModel.RoleNormaizedName
+                };
+                IdentityResult rs = await roleManager.CreateAsync(role);
+                return Ok(new Response { Status = "Sucess", Message = "Added Sucessfully" });
+            } else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Role already exists!" });
+            }
+
+        }
+
+
+        [HttpPost]
+        [Route("change-password")]
+        public async Task<IActionResult> changePassword([FromBody] ResetPwdModel  usermodel)
+        {
+            ApplicationUser user = await userManager.FindByEmailAsync(usermodel.Email);
+            if (user != null)
+            {
+                var token = await userManager.GeneratePasswordResetTokenAsync(user);
+                var result = await userManager.ResetPasswordAsync(user, token, "3dsdsoft195*_Z");
+                return Ok(new Response { Status = "Sucess", Message = "Password Edited Sucessfully" });
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Password not Edited Sucessfully" });
+            }
+        }
+
+
+
+
+
+
+
 
     }
 }
