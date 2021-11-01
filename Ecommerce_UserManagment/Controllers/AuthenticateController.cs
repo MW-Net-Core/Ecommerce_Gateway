@@ -1,4 +1,5 @@
 ﻿using Ecommerce_UserManagment.Identity;
+using Ecommerce_UserManagment.Identity.Email;
 using Ecommerce_UserManagment.Identity.Entities;
 using Ecommerce_UserManagment.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -91,9 +92,26 @@ namespace Ecommerce_UserManagment.Controllers
             if (!result.Succeeded)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
 
+
+            var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+            var confirmationLink = Url.Action("ConfirmEmail", "Authenticate", new { token , email = user.Email }, Request.Scheme);
+            EmailHelper emailHelper = new EmailHelper();
+            bool emailResponse = emailHelper.SendEmail(user.Email, confirmationLink);
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
 
+        [HttpPost]
+        [Route("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail(string token, string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User Not Found" });
+
+            var result = await userManager.ConfirmEmailAsync(user, token);
+                return Ok(new Response { Status = "Success", Message = "User activated successfully!" });
+            
+        }
 
         [HttpPost]
         [Route("register-admin")]
@@ -126,7 +144,6 @@ namespace Ecommerce_UserManagment.Controllers
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
 
-
         [HttpPost]
         [Route("add-role")]
         public async Task<IActionResult> AddRole([FromBody] RoleModel roleModel)
@@ -150,7 +167,6 @@ namespace Ecommerce_UserManagment.Controllers
 
         }
 
-
         [HttpPost]
         [Route("change-password")]
         public async Task<IActionResult> changePassword([FromBody] ResetPwdModel  usermodel)
@@ -167,13 +183,6 @@ namespace Ecommerce_UserManagment.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Password not Edited Sucessfully" });
             }
         }
-
-
-
-
-
-
-
 
     }
 }

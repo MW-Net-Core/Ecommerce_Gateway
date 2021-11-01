@@ -10,7 +10,6 @@ namespace Ecommerce_UserManagment.Models
     public class ResetPwdModel
     {
 
-        public Guid UserId { get; set; }
 
         [Required(ErrorMessage = "User Name is required")]
         public string Username { get; set; }

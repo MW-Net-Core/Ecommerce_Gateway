@@ -42,6 +42,7 @@ namespace Ecommerce_UserManagment
                 for identity framework
                 for authentication
                 for bearer token
+                for email confirmation
              */
 
             // For Entity Framework
@@ -78,13 +79,41 @@ namespace Ecommerce_UserManagment
                  };
              });
 
+
+            // adding email confirmation
+            //services.AddIdentity<ApplicationUser, IdentityRole>(opt =>
+            //{
+            //    opt.Password.RequiredLength = 7;
+            //    opt.Password.RequireDigit = false;
+            //    opt.Password.RequireUppercase = false;
+            //    opt.User.RequireUniqueEmail = true;
+            //    opt.SignIn.RequireConfirmedEmail = true;
+            //    opt.Tokens.EmailConfirmationTokenProvider = "emailconfirmation";
+            //});
+
+
+            // adding email verification
+            services.Configure<IdentityOptions>(opts =>
+            {
+                opts.User.RequireUniqueEmail = true;
+                opts.Password.RequiredLength = 8;
+
+                opts.SignIn.RequireConfirmedEmail = true;
+            });
+
+
             /*
                 custom code above
                 for Entity framework
                 for identity framework
                 for authentication
                 for bearer token
+                for email confirmation
              */
+
+
+
+
 
 
 
