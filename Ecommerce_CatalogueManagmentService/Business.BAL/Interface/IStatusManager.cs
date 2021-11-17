@@ -1,4 +1,5 @@
 ﻿using Ecommerce_CatalogueManagmentService.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -11,6 +12,7 @@ namespace Ecommerce_CatalogueManagmentService.Business.BAL.Interface
         Task<bool> checkbyId(StatusVM statusVM);
         Task<ResponseVM> AddStatus(StatusVM statusVM);
         Task<ResponseVM> UpdateStatus(StatusVM statusVM);
+        Task<ResponseVM> DeleteStatus(Guid? id);
 
     }
 }

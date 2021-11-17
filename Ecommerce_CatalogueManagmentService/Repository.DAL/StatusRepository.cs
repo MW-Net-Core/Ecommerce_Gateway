@@ -16,7 +16,6 @@ namespace Ecommerce_CatalogueManagmentService.Repository.DAL.Interfaces
         {
             _context = context;
         }
-
         public async Task<StatusVM> addStatus(StatusVM statusVM)
         {
             Status status = new Status
@@ -59,38 +58,49 @@ namespace Ecommerce_CatalogueManagmentService.Repository.DAL.Interfaces
             
             if(result != null)
                 return true;
-
-                return false;
-            
+            return false;
+        }
+        public async Task<bool> checkStatusId(StatusVM statusVM)
+        {
+            var result = await _context.TblStatus.Where(x => x.StatusId.Equals(statusVM.StatusId)).FirstOrDefaultAsync();
+            if (result != null)
+                return true;
+            return false;
         }
         public async Task<StatusVM> updateStatus(StatusVM statusVM)
         {
             var status = await _context.TblStatus.FirstOrDefaultAsync(o => o.StatusId.Equals(statusVM.StatusId));
-            if (status != null) 
+            if (status != null)
             {
-                status.StatusId = statusVM.StatusId;
                 status.StatusName = statusVM.StatusName;
                 status.StatuDescription = statusVM.StatuDescription;
+
+                _context.Entry(status).State = EntityState.Modified;
+                
                 await _context.SaveChangesAsync();
+                
                 return statusVM;
             }
-
-            StatusVM vM = new StatusVM
+            else
             {
-                StatusId = Guid.NewGuid(),
-                StatusName = "Error",
-                StatuDescription = "Error Pro Max"
-            };
-            return vM;
+                StatusVM vM = new StatusVM
+                {
+                    StatusId = Guid.NewGuid(),
+                    StatusName = "Error",
+                    StatuDescription = "Error Pro Max"
+                };
+                return vM;
+            }
         }
-        public async Task<bool> checkStatusId(StatusVM statusVM)
+        public async Task<bool> deleteStatus(Guid? id)
         {
-            var result = await _context.TblStatus.Where(x => x.StatusName.Equals(statusVM.StatusId)).FirstOrDefaultAsync();
-
-            if (result != null)
-                return true;
-
-            return false;
+            var status = new Status
+            {
+                StatusId = (Guid)id
+            };
+            _context.Remove(status);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

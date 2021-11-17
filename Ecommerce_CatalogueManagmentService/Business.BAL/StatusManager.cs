@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ecommerce_CatalogueManagmentService.Business.BAL.Interface;
 using Ecommerce_CatalogueManagmentService.Models;
@@ -13,6 +14,21 @@ namespace Ecommerce_CatalogueManagmentService.Business.BAL
         {
             _statusReporsitory = statusReporsitory;
         }
+        public async Task<bool> checkbyId(StatusVM statusVM)
+        {
+            bool alreadyExistId = await _statusReporsitory.checkStatusId(statusVM);
+            if (alreadyExistId)
+                return true;
+            return false;
+        }
+        public async Task<bool> checkStatusAlreadyExists(StatusVM statusVM)
+        {
+            return await _statusReporsitory.checkStatus(statusVM);
+        }
+        public async Task<List<StatusVM>> GetAllStatus()
+        {
+            return await _statusReporsitory.getall();
+        }
         public async Task<ResponseVM> AddStatus(StatusVM statusVM)
         {
             bool alreadyExist = await this.checkStatusAlreadyExists(statusVM);
@@ -26,27 +42,6 @@ namespace Ecommerce_CatalogueManagmentService.Business.BAL
             ResponseVM responseVM = new ResponseVM { Status = "Success", Message = "Added Successfully" };
             return responseVM;
         }
-
-        public async Task<bool> checkbyId(StatusVM statusVM)
-        {
-            bool alreadyExistId = await _statusReporsitory.checkStatusId(statusVM);
-            if (alreadyExistId)
-            {
-                return true;
-            } else
-            {
-                return false
-            }
-        }
-
-        public async Task<bool> checkStatusAlreadyExists(StatusVM statusVM)
-        {
-            return await _statusReporsitory.checkStatus(statusVM);
-        }
-        public async Task<List<StatusVM>> GetAllStatus()
-        {
-            return await _statusReporsitory.getall();
-        }
         public async Task<ResponseVM> UpdateStatus(StatusVM statusVM)
         {
             bool alreadyExist = await this.checkbyId(statusVM);
@@ -56,6 +51,13 @@ namespace Ecommerce_CatalogueManagmentService.Business.BAL
                 return new ResponseVM { Status = "Success", Message = "Role Updated Successfully" };
             }
                 return new ResponseVM { Status = "Error", Message = "Role Not Present" };
+        }
+        public async Task<ResponseVM> DeleteStatus(Guid? id)
+        {
+            bool result = await _statusReporsitory.deleteStatus(id);
+            if (result)
+                return new ResponseVM { Status = "Success", Message = "Deleted Successfully" };
+            return new ResponseVM { Status = "Error", Message = "Not Deleted Successfully" };
         }
     }
 }
