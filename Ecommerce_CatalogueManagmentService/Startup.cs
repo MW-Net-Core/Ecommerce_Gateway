@@ -1,21 +1,16 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Ecommerce_CatalogManagmentService.Entities;
-using Ecommerce_CatalogManagmentService.Repository.Dal;
+using Ecommerce_CatalogueManagmentService.Entities.DO;
+using Ecommerce_CatalogueManagmentService.Business.BAL.Interface;
+using Ecommerce_CatalogueManagmentService.Business.BAL;
+using Ecommerce_CatalogueManagmentService.Repository.DAL.Interfaces;
 
-namespace Ecommerce_CatalogManagmentService
+namespace Ecommerce_CatalogueManagmentService
 {
     public class Startup
     {
@@ -31,12 +26,13 @@ namespace Ecommerce_CatalogManagmentService
         {
 
             services.AddControllers();
-
-            services.AddDbContext<CatelogDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddTransient<IStatusManager, StatusManager>();
             services.AddTransient<IStatusRepository, StatusRepository>();
+
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ecommerce_CatalogManagmentService", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ecommerce_CatalogueManagmentService", Version = "v1" });
             });
         }
 
@@ -47,7 +43,7 @@ namespace Ecommerce_CatalogManagmentService
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce_CatalogManagmentService v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce_CatalogueManagmentService v1"));
             }
 
             app.UseHttpsRedirection();

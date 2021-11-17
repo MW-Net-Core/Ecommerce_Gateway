@@ -65,5 +65,25 @@ namespace Ecommerce_Gateway.Utilities
 
         public string Authenticate => $"{UserMangementBaseUri}{_config.GetValue<string>("AppSettings:ApiEndpoints:Authenticate")}";
 
+
+
+
+
+
+
+
+        //catelogue url
+        public Uri CatelogueMangementBaseUri
+        {
+            get
+            {
+                var uri = _config.GetValue<string>("AppSettings:CatelogueMangementBaseUri");
+                return new Uri(uri);
+            }
+        }
+
+
+        public string getStatusesCatelogue => $"{CatelogueMangementBaseUri}{_config.GetValue<string>("AppSettings:ApiEndpoints:Status")}";
+
     }
 }

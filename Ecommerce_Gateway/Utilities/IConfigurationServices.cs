@@ -14,5 +14,6 @@ namespace Ecommerce_Gateway.Utilities
         Uri UserMangementBaseUri { get; }
         Guid UserLoggedInId { get; }
         string Authenticate { get; }
+        string getStatusesCatelogue { get; }
     }
 }

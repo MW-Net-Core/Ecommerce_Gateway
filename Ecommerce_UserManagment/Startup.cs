@@ -36,6 +36,17 @@ namespace Ecommerce_UserManagment
 
             services.AddControllers();
 
+            //comment this
+            //adding email confirmation
+            //services.AddIdentity<ApplicationUser, IdentityRole>(opt =>
+            //{
+            //    opt.SignIn.RequireConfirmedEmail = true;
+
+            //})
+            //    AddEntityFrameworkStores<ApplicationDbContext>()
+            //.AddDefaultTokenProviders();
+
+
             /*
                 custom code below
                 for Entity framework
@@ -51,7 +62,9 @@ namespace Ecommerce_UserManagment
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             // For Identity  
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>(options => {
+                options.SignIn.RequireConfirmedEmail = true;
+            })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -80,19 +93,10 @@ namespace Ecommerce_UserManagment
              });
 
 
-            // adding email confirmation
-            //services.AddIdentity<ApplicationUser, IdentityRole>(opt =>
-            //{
-            //    opt.Password.RequiredLength = 7;
-            //    opt.Password.RequireDigit = false;
-            //    opt.Password.RequireUppercase = false;
-            //    opt.User.RequireUniqueEmail = true;
-            //    opt.SignIn.RequireConfirmedEmail = true;
-            //    opt.Tokens.EmailConfirmationTokenProvider = "emailconfirmation";
-            //});
 
 
-            // adding email verification
+
+            //// adding email verification
             services.Configure<IdentityOptions>(opts =>
             {
                 opts.User.RequireUniqueEmail = true;

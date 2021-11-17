@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Ecommerce_CatalogManagmentService.Entities
+
+namespace Ecommerce_CatalogManagmentService.Entities.DO
 {
     public class Category
     {
-        [Key]
         public Guid CategoryId { get; set; }
-
-
-        [StringLength(200), Required]   //add unique also
         public string CategoryName { get; set; }
-
-        [StringLength(300)]
         public string CategoryDescription { get; set; }
+        public Guid StatusId { get; set; }
+        [ForeignKey(nameof(StatusId))]
+        public Status _status { get; set; }
+
     }
 }

@@ -5,15 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Controllers\" />
-    <Folder Include="Data\Interfaces\" />
-    <Folder Include="Data\Models\" />
-    <Folder Include="Repositories\Interfaces\" />
-    <Folder Include="Repositories\Models\" />
   </ItemGroup>
 
 </Project>
