@@ -27,8 +27,12 @@ namespace Ecommerce_CatalogueManagmentService
 
             services.AddControllers();
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            
             services.AddTransient<IStatusManager, StatusManager>();
             services.AddTransient<IStatusRepository, StatusRepository>();
+            services.AddTransient<ICategoryManager,  CategoryManager>();
+            services.AddTransient<ICategoryRepository, CategoryRepository>();
+
 
             services.AddSwaggerGen(c =>
             {
