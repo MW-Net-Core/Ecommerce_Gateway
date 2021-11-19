@@ -15,9 +15,7 @@ namespace Ecommerce_CatalogueManagmentService.Repository.DAL.Interfaces
         Task<CategoryVM> AddCategory(CategoryVM categoryVM);
 
 
-        //check staus id exist
-        Task<bool> checkStatusId(Guid? id);
-
+     
         //check category id exist
         Task<bool> checkCategoryId(Guid? id);
 
@@ -27,5 +25,10 @@ namespace Ecommerce_CatalogueManagmentService.Repository.DAL.Interfaces
 
         //get the list of categories
         Task<List<CategoryVM>> GetAllCategories();
+
+
+        Task<bool> DeleteCategory(Guid? id); 
+
+
     }
 }

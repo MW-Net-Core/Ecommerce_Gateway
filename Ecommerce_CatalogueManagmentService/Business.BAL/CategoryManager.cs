@@ -25,23 +25,17 @@ namespace Ecommerce_CatalogueManagmentService.Business.BAL
                 return true;
             return false;
         }
-        // getting true if status Id Exist otherwise false
-        public async Task<bool> StatusExist(Guid? id)
-        {
-            var res = await _categoryRepository.checkStatusId(id);
-            if (res)
-                return true;
-            return false;
-        }
+
+
         // add category 
         public async Task<ResponseVM> AddCategory(CategoryVM categoryVM)
         {
 
             //category and status Checking
             bool categoryexist = await this.CategoryExist(categoryVM);
-            bool statusExist = await this.StatusExist((Guid)categoryVM.StatusId);
+           
 
-            if(categoryexist == false && statusExist == true)
+            if(categoryexist == false)
             {
                 await _categoryRepository.AddCategory(categoryVM);
                 return new ResponseVM { Status = "Success", Message = "Category Added Successfully" };
@@ -50,24 +44,37 @@ namespace Ecommerce_CatalogueManagmentService.Business.BAL
 
 
         }
+       
         //updates category
         public async Task<ResponseVM> UpdateCategory(CategoryVM categoryVM)
         {
             //category and status Checking
             bool categoryidexist = await _categoryRepository.checkCategoryId((Guid)categoryVM.CategoryId);
-            bool statusExist = await this.StatusExist((Guid)categoryVM.StatusId);
+            
 
-            if (categoryidexist && statusExist)
+            if (categoryidexist)
             {
                 await _categoryRepository.UpdateCategory(categoryVM);
                 return new ResponseVM { Status = "Success", Message = "Updated" };
             }
             return new ResponseVM { Status = "Error", Message = "Not Updated" };
         }
+       
+        
+        
         //get categories list
         public async Task<List<CategoryVM>> GetAllCategories()
         {
             return await _categoryRepository.GetAllCategories();
+        }
+
+        //delete category
+        public async Task<ResponseVM> DeleteCategorys(Guid? id)
+        {
+            bool result = await _categoryRepository.DeleteCategory(id);
+            if (result)
+                return new ResponseVM { Status = "Success", Message = "Deleted Successfully" };
+            return new ResponseVM { Status = "Error", Message = "Not Deleted Successfully" };
         }
     }
 }

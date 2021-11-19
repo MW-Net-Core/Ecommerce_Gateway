@@ -10,6 +10,5 @@ namespace Ecommerce_CatalogueManagmentService.Models
         public Guid CategoryId { get; set; }
         public string CategoryName { get; set; }
         public string CategoryDescription { get; set; }
-        public Guid StatusId { get; set; }
     }
 }

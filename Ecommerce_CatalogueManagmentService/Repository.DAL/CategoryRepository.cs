@@ -30,13 +30,6 @@ namespace Ecommerce_CatalogueManagmentService.Repository.DAL.Interfaces
                 return true;
             return false;
         }
-        public async Task<bool> checkStatusId(Guid? id)
-        {
-            var statusIsAvailable = await _context.TblStatus.Where(x => x.StatusId == id).FirstOrDefaultAsync();
-            if (statusIsAvailable != null)
-                return true;
-            return false;
-        }
         public async Task<CategoryVM> AddCategory(CategoryVM categoryVM)
         {
 
@@ -46,7 +39,7 @@ namespace Ecommerce_CatalogueManagmentService.Repository.DAL.Interfaces
                 CategoryId = Guid.NewGuid(),
                 CategoryName = categoryVM.CategoryName,
                 CategoryDescription = categoryVM.CategoryDescription,
-                StatusId = categoryVM.StatusId
+               
             };
 
 
@@ -75,7 +68,8 @@ namespace Ecommerce_CatalogueManagmentService.Repository.DAL.Interfaces
             {
                 category.CategoryName = categoryVM.CategoryName;
                 category.CategoryDescription = categoryVM.CategoryDescription;
-                category.StatusId = categoryVM.StatusId;
+             
+
 
                 _context.Entry(category).State = EntityState.Modified;
 
@@ -100,10 +94,19 @@ namespace Ecommerce_CatalogueManagmentService.Repository.DAL.Interfaces
                {
                    CategoryId = o.CategoryId,
                    CategoryName = o.CategoryName,
-                   CategoryDescription = o.CategoryDescription,
-                   StatusId = o.StatusId                 
+                   CategoryDescription = o.CategoryDescription,          
                     //}).Where(x => x.StatusId == Guid.NewGuid()).ToListAsync();
                }).ToListAsync();
+        }
+        public async Task<bool> DeleteCategory(Guid? id)
+        {
+            var category = new Category
+            {
+                CategoryId = (Guid)id
+            };
+            _context.Remove(category);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

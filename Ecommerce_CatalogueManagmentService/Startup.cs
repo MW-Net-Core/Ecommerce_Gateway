@@ -9,6 +9,7 @@ using Ecommerce_CatalogueManagmentService.Entities.DO;
 using Ecommerce_CatalogueManagmentService.Business.BAL.Interface;
 using Ecommerce_CatalogueManagmentService.Business.BAL;
 using Ecommerce_CatalogueManagmentService.Repository.DAL.Interfaces;
+using Ecommerce_CatalogueManagmentService.Repository.DAL;
 
 namespace Ecommerce_CatalogueManagmentService
 {
@@ -32,6 +33,10 @@ namespace Ecommerce_CatalogueManagmentService
             services.AddTransient<IStatusRepository, StatusRepository>();
             services.AddTransient<ICategoryManager,  CategoryManager>();
             services.AddTransient<ICategoryRepository, CategoryRepository>();
+            services.AddTransient<IProductManager,ProductManager>();
+            services.AddTransient<IProductRepository, ProductRepository>();
+
+
 
 
             services.AddSwaggerGen(c =>

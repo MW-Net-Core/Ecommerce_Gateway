@@ -12,5 +12,7 @@ namespace Ecommerce_CatalogueManagmentService.Business.BAL
         Task<ResponseVM> AddCategory(CategoryVM categoryVM);
         Task<ResponseVM> UpdateCategory(CategoryVM categoryVM);
         Task<List<CategoryVM>> GetAllCategories();
+        Task<ResponseVM> DeleteCategorys(Guid? id);
+
     }
 }

@@ -43,5 +43,16 @@ namespace Ecommerce_CatalogueManagmentService.Controllers
             var res = await _categoryManager.GetAllCategories();
             return Ok(res);
         }
+
+        [HttpDelete]
+        [Route("delete-category")]
+        public async Task<IActionResult> DeleteCategory(Guid? id)
+        {
+            var res = await _categoryManager.DeleteCategorys(id);
+            return Ok(res);
+
+        }
+
+
     }
 }
