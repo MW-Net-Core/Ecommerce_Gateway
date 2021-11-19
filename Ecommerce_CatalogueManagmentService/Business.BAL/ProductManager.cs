@@ -17,6 +17,12 @@ namespace Ecommerce_CatalogueManagmentService.Business.BAL
             _productRepository = productRepository;
         }
 
+        public async Task<ResponseVM> DeleteProduct(Guid? id)
+        {
+            bool result = await _productRepository.DeleteProduct(id);
+            return new ResponseVM { Status = "Success", Message = "Deleted Successfully" };
+        }
+
         public async Task<ResponseVM> EditProduct(ProductVM productVM)
         {
             bool ispresnt = await _productRepository.checkProductId((Guid)productVM.ProductId);
@@ -29,6 +35,11 @@ namespace Ecommerce_CatalogueManagmentService.Business.BAL
             {
                 return new ResponseVM { Status = "Error", Message = "Not Updated Successfully" };
             }
+        }
+
+        public async Task<List<ProductVM>> FetchAllProducts()
+        {
+            return await _productRepository.GetAllProducts();
         }
 
         public async Task<ResponseVM> InsertProduct(ProductVM productVM)

@@ -12,6 +12,8 @@ namespace Ecommerce_CatalogueManagmentService.Repository.DAL.Interfaces
         Task<ProductVM>UpdateProduct(ProductVM productVM);
         Task<bool> checkProductNameExists(string name);
         Task<bool> checkProductId(Guid? id);
+        Task<bool> DeleteProduct(Guid? id);
+        Task<List<ProductVM>> GetAllProducts();
 
 
 

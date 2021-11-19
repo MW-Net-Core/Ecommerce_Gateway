@@ -28,8 +28,6 @@ namespace Ecommerce_CatalogueManagmentService.Controllers
             return Ok(res);
         }
 
-
-
         [HttpPut]
         [Route("Edit-Product")]
         public async Task<IActionResult> updateProduct([FromBody] ProductVM productVM)
@@ -37,6 +35,23 @@ namespace Ecommerce_CatalogueManagmentService.Controllers
             var res = await _IProductManager.EditProduct(productVM);
             return Ok(res);
         }
+
+        [HttpDelete]
+        [Route("delete-product")]
+        public async Task<IActionResult> deleteProduct(Guid? id)
+        {
+            var res = await _IProductManager.DeleteProduct(id);
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [Route("get-all-products")]
+        public async Task<IActionResult> getallproducts()
+        {
+            var res = await _IProductManager.FetchAllProducts();
+            return Ok(res);
+        }
+
 
     }
 }

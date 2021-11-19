@@ -43,6 +43,29 @@ namespace Ecommerce_CatalogueManagmentService.Repository.DAL
                 return true;
             return false;
         }
+        public async Task<bool> DeleteProduct(Guid? id)
+        {
+            var product = new Product
+            {
+                ProductId = (Guid)id
+            };
+            _context.Remove(product);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<List<ProductVM>> GetAllProducts()
+        {
+            return await _context.TblProduct
+           .Select(o => new ProductVM
+           {
+               ProductId = o.ProductId,
+               ProductName = o.ProductName,
+               ProductDescription = o.ProductDescription
+               //}).Where(x => x.StatusId == Guid.NewGuid()).ToListAsync();
+           }).ToListAsync();
+        }
+
         public async Task<ProductVM> UpdateProduct(ProductVM productVM)
         {
 

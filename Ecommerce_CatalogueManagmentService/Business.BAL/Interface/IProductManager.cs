@@ -9,8 +9,9 @@ namespace Ecommerce_CatalogueManagmentService.Business.BAL.Interface
     public interface IProductManager
     {
         Task<ResponseVM> InsertProduct(ProductVM productVM);
-
         Task<ResponseVM> EditProduct(ProductVM productVM);
+        Task<ResponseVM> DeleteProduct(Guid? id);
+        Task<List<ProductVM>> FetchAllProducts();
 
     }
 }
