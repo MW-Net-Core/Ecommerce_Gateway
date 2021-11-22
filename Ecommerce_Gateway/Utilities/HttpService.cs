@@ -23,7 +23,7 @@ namespace Ecommerce_Gateway.Utilities
             {
                 httpContextAccessor.HttpContext.Request.Headers.TryGetValue("Authorization", out Microsoft.Extensions.Primitives.StringValues authorizationHeader);
 
-                httpContextAccessor.HttpContext.Request.Headers.TryGetValue("currentOrganizationId", out Microsoft.Extensions.Primitives.StringValues currentOrganizationHeader);
+                httpContextAccessor.HttpContext.Request.Headers.TryGetValue("role", out Microsoft.Extensions.Primitives.StringValues currentOrganizationHeader);
 
                 if (!string.IsNullOrEmpty(authorizationHeader))
                 {

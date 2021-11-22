@@ -118,6 +118,20 @@ namespace Ecommerce_UserManagment.Controllers
             //}
 
 
+
+
+            if (!await roleManager.RoleExistsAsync(UserRoles.User))
+                await roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+          
+
+            if (await roleManager.RoleExistsAsync(UserRoles.Admin))
+            {
+                await userManager.AddToRoleAsync(user, UserRoles.Admin);
+            }
+
+
+
+
             string confirmationToken = userManager.GenerateEmailConfirmationTokenAsync(user).Result;
             string confirmationLink = Url.Action("ConfirmEmail", "Authenticate", new
             {
@@ -184,8 +198,30 @@ namespace Ecommerce_UserManagment.Controllers
                 await userManager.AddToRoleAsync(user, UserRoles.Admin);
             }
 
+            string confirmationToken = userManager.GenerateEmailConfirmationTokenAsync(user).Result;
+            string confirmationLink = Url.Action("ConfirmEmail", "Authenticate", new
+            {
+                userId = user.Id,
+                token = confirmationToken
+            },
+               Request.Scheme);
+
+
+            EmailHelper emailHelper = new EmailHelper();
+            bool emailResponse = emailHelper.SendEmail(user.Email, confirmationLink);
+
+
+
+
+
+
+
+
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
+
+
+
 
         //Action Method for adding the new role
         [Authorize("Admin")]

@@ -29,17 +29,12 @@ namespace Ecommerce_CatalogueManagmentService.Entities.DO
         //        .HasForeignKey(sc => sc.PscId);
         //}        public DbSet<Product_Category_Status> TblPCS { get; set; }
 
-
-
-
-
-
-
-
-
-
+        
         public DbSet<Category> TblCategory { get; set; }
         public DbSet<Status> TblStatus { get; set; }
         public DbSet<Product> TblProduct { get; set; }
+        public DbSet<CategoryStatus> TblCategoryStatus { get; set; }
+
+
     }
 }

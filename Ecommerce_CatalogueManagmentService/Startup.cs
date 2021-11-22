@@ -31,10 +31,17 @@ namespace Ecommerce_CatalogueManagmentService
             
             services.AddTransient<IStatusManager, StatusManager>();
             services.AddTransient<IStatusRepository, StatusRepository>();
-            services.AddTransient<ICategoryManager,  CategoryManager>();
+
+            services.AddTransient<ICategoryManager, CategoryManager>();
             services.AddTransient<ICategoryRepository, CategoryRepository>();
-            services.AddTransient<IProductManager,ProductManager>();
+
+
+            services.AddTransient<IProductManager, ProductManager>();
             services.AddTransient<IProductRepository, ProductRepository>();
+
+
+            services.AddTransient<ICategoryStatusManager, CategoryStatusManager>();
+            services.AddTransient<IStatusCategoryRepository, StatusCategoryRepository>();
 
 
 

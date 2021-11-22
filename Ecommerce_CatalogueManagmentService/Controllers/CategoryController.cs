@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Ecommerce_CatalogueManagmentService.Business.BAL;
 using Ecommerce_CatalogueManagmentService.Models;
+using System.Threading;
 
 namespace Ecommerce_CatalogueManagmentService.Controllers
 {
@@ -40,9 +41,17 @@ namespace Ecommerce_CatalogueManagmentService.Controllers
         [Route("get-all-category")]
         public async Task<IActionResult> getAllCategories()
         {
+            var Catergory = Thread.CurrentPrincipal.Identity;
+            var isEnrolled = Thread.CurrentPrincipal.IsInRole("User");
             var res = await _categoryManager.GetAllCategories();
             return Ok(res);
         }
+
+
+
+
+
+
 
         [HttpDelete]
         [Route("delete-category")]

@@ -4,14 +4,16 @@ using Ecommerce_CatalogueManagmentService.Entities.DO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Ecommerce_CatalogueManagmentService.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211120032514_StatusCategory combined")]
+    partial class StatusCategorycombined
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,8 +52,7 @@ namespace Ecommerce_CatalogueManagmentService.Migrations
 
                     b.HasKey("CsId");
 
-                    b.HasIndex("CategoryId")
-                        .IsUnique();
+                    b.HasIndex("CategoryId");
 
                     b.HasIndex("StatusId");
 
@@ -95,8 +96,8 @@ namespace Ecommerce_CatalogueManagmentService.Migrations
             modelBuilder.Entity("Ecommerce_CatalogueManagmentService.Entities.DO.CategoryStatus", b =>
                 {
                     b.HasOne("Ecommerce_CatalogueManagmentService.Entities.DO.Category", "Category")
-                        .WithOne("CategoryStatus")
-                        .HasForeignKey("Ecommerce_CatalogueManagmentService.Entities.DO.CategoryStatus", "CategoryId")
+                        .WithMany("CategoryStatus")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
