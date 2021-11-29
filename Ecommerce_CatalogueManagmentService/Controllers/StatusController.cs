@@ -22,12 +22,13 @@ namespace Ecommerce_CatalogueManagmentService.Controllers
 
         [HttpGet]
         [Route("get-all-status")]
-        
         public async Task<IActionResult> getAllStatus() 
         {
             var res = await _status.GetAllStatus();
             return Ok(res);
         }
+       
+        
         [HttpPost]
         [Route("add-status")]
         public async Task<IActionResult> addStatus([FromBody]StatusVM statusVM) 

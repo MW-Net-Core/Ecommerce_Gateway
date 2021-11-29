@@ -10,5 +10,8 @@ namespace Ecommerce_CatalogueManagmentService.Business.BAL.Interface
     {
         public Task<ResponseVM> addStatusCategory(StatusCategoryVM statusCategoryVM);
         public Task<ResponseVM> editStatusCategory(StatusCategoryVM statusCategoryVM);
+
+        public Task<List<CategoryStatusVMList>> getCategoryStatusList();
+    
     }
 }

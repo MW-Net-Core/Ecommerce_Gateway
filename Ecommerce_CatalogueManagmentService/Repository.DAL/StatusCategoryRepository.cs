@@ -72,5 +72,25 @@ namespace Ecommerce_CatalogueManagmentService.Repository.DAL
                 return true;
             return false;
         }
+
+        public async Task<List<CategoryStatusVMList>> getAllVCategoryStatus()
+        {
+            var joined_data = await (from x in _context.TblCategoryStatus
+                              join status in _context.TblStatus on x.StatusId equals status.StatusId
+                              join category in _context.TblCategory on x.CategoryId equals category.CategoryId
+                              //where e.OwnerID == user.UID
+                              select new CategoryStatusVMList
+                              {
+                                  CSId = x.CsId,
+                                  CategoryName = category.CategoryName,
+                                  CategoryDescription = category.CategoryDescription,
+                                  StatusName = status.StatusName,
+                                  StatusDescription = status.StatuDescription
+                              }).ToListAsync();
+
+            return joined_data;
+
+
+        }
     }
 } 

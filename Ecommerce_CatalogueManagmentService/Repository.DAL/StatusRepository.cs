@@ -20,7 +20,7 @@ namespace Ecommerce_CatalogueManagmentService.Repository.DAL.Interfaces
         {
             Status status = new Status
             {
-                StatusId = statusVM.StatusId,
+                StatusId = Guid.NewGuid(),
                 StatusName = statusVM.StatusName,
                 StatuDescription = statusVM.StatuDescription
             };

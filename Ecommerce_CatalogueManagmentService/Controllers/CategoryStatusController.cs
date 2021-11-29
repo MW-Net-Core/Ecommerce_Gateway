@@ -6,7 +6,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Ecommerce_CatalogueManagmentService.Business.BAL;
 using Ecommerce_CatalogueManagmentService.Models;
+using Ecommerce_CatalogueManagmentService.Repository.DAL;
 using Ecommerce_CatalogueManagmentService.Business.BAL.Interface;
+using Ecommerce_CatalogueManagmentService.Repository.DAL.Interfaces;
 
 namespace Ecommerce_CatalogueManagmentService.Controllers
 {
@@ -19,7 +21,7 @@ namespace Ecommerce_CatalogueManagmentService.Controllers
         {
             _categoryStatusManager = categoryStatusManager;
         }
-    
+
         [HttpPost]
         [Route("add-Category-status")]
         public async Task<IActionResult> add([FromBody] StatusCategoryVM statusCategoryVM)
@@ -36,6 +38,18 @@ namespace Ecommerce_CatalogueManagmentService.Controllers
             var res = await _categoryStatusManager.editStatusCategory(statusCategoryVM);
             return Ok(res);
         }
+
+        [HttpGet]
+        [Route("get-All")]
+        public async Task<IActionResult> getAll()
+        {
+            var res = await _categoryStatusManager.getCategoryStatusList();
+            return Ok(res);
+        }
+
+
+
+
 
 
     }

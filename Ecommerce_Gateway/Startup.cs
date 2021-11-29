@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Http.Features;
 using Ecommerce_Gateway.Utilities;
+using Common.Utility;
 
 namespace Ecommerce_Gateway
 {
@@ -47,6 +48,9 @@ namespace Ecommerce_Gateway
             //});
             #endregion
 
+
+
+
             services.AddControllers();
            
             services.AddSwaggerGen(c =>
@@ -70,6 +74,11 @@ namespace Ecommerce_Gateway
                 });
 
             services.AddControllers().AddNewtonsoftJson();
+
+
+            //JWT
+            services.ConfigureJwtAuthentication(Configuration.GetValue<string>("AppSettings:Secret"));
+
 
             // Note: Added to allow image file uploading
             services.Configure<FormOptions>(o =>

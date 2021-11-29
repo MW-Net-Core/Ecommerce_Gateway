@@ -11,7 +11,7 @@ namespace Ecommerce_CatalogueManagmentService.Repository.DAL.Interfaces
         Task<bool> categoryIsPresent(Guid? id);
         Task<bool> statusIsPresent(Guid? id);
         Task<bool> statusCategoryIdIsPresent(Guid? id);
-
+        Task<List<CategoryStatusVMList>> getAllVCategoryStatus();
         Task<bool> insertData(StatusCategoryVM statusCategoryVM);
         Task<bool> updateData(StatusCategoryVM statusCategoryVM);
 

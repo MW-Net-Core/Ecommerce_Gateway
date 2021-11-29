@@ -1,4 +1,5 @@
-﻿using Ecommerce_Gateway.Utilities;
+﻿using Ecommerce_Gateway.Model;
+using Ecommerce_Gateway.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -33,8 +34,10 @@ namespace Ecommerce_Gateway.Controller
         }
 
 
+        //user and admin both
         // return a list of status from status service 
         [HttpGet]
+        [Route("Get-All-Status-Gateway")]
         public async Task<IActionResult> getAllStatusGATEWAY()
         {
             using (_http)
@@ -61,7 +64,36 @@ namespace Ecommerce_Gateway.Controller
         }
 
 
+        //admin
+        [HttpPost("Add-Status-Gateway")]
+        public async Task<Response> AddStatus(StatusCatalogue st)
+        {
 
+            using (_http) //client's object which is making a request which is furture responsed
+            {
+                _http.BaseAddress = new Uri(_config.getStatusesCatelogue);   // path to send the post data
+                _http.DefaultRequestHeaders.Accept.Clear(); //not necessary in registers case it's a safe check
+                _http.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));    // data type must be json what to send
+
+                var result = await _http.PostAsync("add-status", st.AsJson());   //await used as its async (hit on register method of usermanagement service which gives a response)
+                //the above 2 cases AsJson converting c# obj to json                    
+                if (result.IsSuccessStatusCode)
+                {
+                    var response = await result.Content.ReadAsStringAsync();    //get data from user managment api on successfully registration of the user
+                    return new Response { status = "Sucess", message = "Status registered sucessfully" };
+                }
+                else
+                {
+                    return new Response { status = "Error", message = "Status not registered sucessfully" };
+                }
+            }
+        }
+ 
+
+
+
+         
+        
 
 
     }
