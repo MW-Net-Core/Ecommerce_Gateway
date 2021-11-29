@@ -1,3 +1,4 @@
+using Common.Utility;
 using Ecommerce_UserManagment.Identity;
 using Ecommerce_UserManagment.Identity.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -116,7 +117,8 @@ namespace Ecommerce_UserManagment
              */
 
 
-
+            //JWT from class library reference added
+            services.ConfigureJwtAuthentication(Configuration.GetValue<string>("JWT:Secret"));
 
 
 

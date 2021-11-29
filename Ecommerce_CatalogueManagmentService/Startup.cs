@@ -10,6 +10,7 @@ using Ecommerce_CatalogueManagmentService.Business.BAL.Interface;
 using Ecommerce_CatalogueManagmentService.Business.BAL;
 using Ecommerce_CatalogueManagmentService.Repository.DAL.Interfaces;
 using Ecommerce_CatalogueManagmentService.Repository.DAL;
+using Common.Utility;
 
 namespace Ecommerce_CatalogueManagmentService
 {
@@ -43,6 +44,13 @@ namespace Ecommerce_CatalogueManagmentService
             services.AddTransient<ICategoryStatusManager, CategoryStatusManager>();
             services.AddTransient<IStatusCategoryRepository, StatusCategoryRepository>();
 
+
+
+
+
+
+            //JWT from class library reference added
+            services.ConfigureJwtAuthentication(Configuration.GetValue<string>("JWT:Secret"));
 
 
 

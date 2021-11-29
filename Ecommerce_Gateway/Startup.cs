@@ -76,7 +76,7 @@ namespace Ecommerce_Gateway
             services.AddControllers().AddNewtonsoftJson();
 
 
-            //JWT
+            //JWT from class library reference added
             services.ConfigureJwtAuthentication(Configuration.GetValue<string>("AppSettings:Secret"));
 
 
