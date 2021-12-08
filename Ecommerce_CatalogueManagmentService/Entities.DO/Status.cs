@@ -11,7 +11,6 @@ namespace Ecommerce_CatalogueManagmentService.Entities.DO
         public string StatusName { get; set; }
         public string StatuDescription { get; set; }
         public virtual ICollection<CategoryStatus> CategoryStatus { get; set; }
-
-
+        public virtual ICollection<ProductStatus> ProductStatus { get; set; }
     }
 }

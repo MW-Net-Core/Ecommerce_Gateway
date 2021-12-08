@@ -72,7 +72,6 @@ namespace Ecommerce_CatalogueManagmentService.Repository.DAL
                 return true;
             return false;
         }
-
         public async Task<List<CategoryStatusVMList>> getAllVCategoryStatus()
         {
             var joined_data = await (from x in _context.TblCategoryStatus
@@ -89,8 +88,6 @@ namespace Ecommerce_CatalogueManagmentService.Repository.DAL
                               }).ToListAsync();
 
             return joined_data;
-
-
         }
     }
 } 

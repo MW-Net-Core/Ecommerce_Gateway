@@ -56,7 +56,6 @@ namespace Ecommerce_CatalogueManagmentService.Business.BAL
             return new ResponseVM { Status = "Error", Message = "Feilds are empty so cannot be Updated" };
 
         }
-
         public async Task<List<CategoryStatusVMList>> getCategoryStatusList()
         {
             return await _statusCategoryRepository.getAllVCategoryStatus();

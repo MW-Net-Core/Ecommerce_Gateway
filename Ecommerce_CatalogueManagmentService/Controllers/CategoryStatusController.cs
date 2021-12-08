@@ -30,7 +30,6 @@ namespace Ecommerce_CatalogueManagmentService.Controllers
             return Ok(res);
         }
 
-
         [HttpPut]
         [Route("edit-Category-status")]
         public async Task<IActionResult> edit([FromBody] StatusCategoryVM statusCategoryVM)
@@ -46,11 +45,5 @@ namespace Ecommerce_CatalogueManagmentService.Controllers
             var res = await _categoryStatusManager.getCategoryStatusList();
             return Ok(res);
         }
-
-
-
-
-
-
     }
 }

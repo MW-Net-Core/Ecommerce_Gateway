@@ -4,14 +4,16 @@ using Ecommerce_CatalogueManagmentService.Entities.DO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Ecommerce_CatalogueManagmentService.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211206170320_Product-With-Status-Added")]
+    partial class ProductWithStatusAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,8 +91,7 @@ namespace Ecommerce_CatalogueManagmentService.Migrations
 
                     b.HasKey("PsId");
 
-                    b.HasIndex("ProductId")
-                        .IsUnique();
+                    b.HasIndex("ProductId");
 
                     b.HasIndex("StatusId");
 
@@ -136,8 +137,8 @@ namespace Ecommerce_CatalogueManagmentService.Migrations
             modelBuilder.Entity("Ecommerce_CatalogueManagmentService.Entities.DO.ProductStatus", b =>
                 {
                     b.HasOne("Ecommerce_CatalogueManagmentService.Entities.DO.Product", "Product")
-                        .WithOne("ProductStatus")
-                        .HasForeignKey("Ecommerce_CatalogueManagmentService.Entities.DO.ProductStatus", "ProductId")
+                        .WithMany("ProductStatus")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

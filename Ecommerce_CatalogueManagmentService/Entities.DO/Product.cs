@@ -15,5 +15,7 @@ namespace Ecommerce_CatalogueManagmentService.Entities.DO
         {
             throw new NotImplementedException();
         }
+        public virtual ProductStatus ProductStatus { get; set; }
+
     }
 }

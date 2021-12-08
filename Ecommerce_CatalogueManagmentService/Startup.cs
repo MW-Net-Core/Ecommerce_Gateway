@@ -44,7 +44,8 @@ namespace Ecommerce_CatalogueManagmentService
             services.AddTransient<ICategoryStatusManager, CategoryStatusManager>();
             services.AddTransient<IStatusCategoryRepository, StatusCategoryRepository>();
 
-
+            services.AddTransient<IProductStatusManager, ProductStatusManager>();
+            services.AddTransient<IStatusProductRepository, StatusProductRepository>();
 
 
 

@@ -34,6 +34,7 @@ namespace Ecommerce_CatalogueManagmentService.Entities.DO
         public DbSet<Status> TblStatus { get; set; }
         public DbSet<Product> TblProduct { get; set; }
         public DbSet<CategoryStatus> TblCategoryStatus { get; set; }
+        public DbSet<ProductStatus> TblProductStatus { get; set; }
 
 
     }
