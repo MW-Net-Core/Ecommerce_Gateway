@@ -11,51 +11,63 @@ namespace Common.Utility
 {
     public static class JwtServiceExtension
     {
-        public static void ConfigureJwtAuthentication(this IServiceCollection services, string JWTSecertKey)
+        public static void ConfigureJwtAuthentication(this IServiceCollection services, string jwtSecretKeyString)
         {
-            var _jwtsecertkey = Encoding.ASCII.GetBytes(JWTSecertKey);
-            services.AddAuthentication(
-              x =>
-              {
-                  x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                  x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            var JwtSecretKey = Encoding.ASCII.GetBytes(jwtSecretKeyString);
 
-              }).AddJwtBearer(
-              x =>
-              {
-                  x.RequireHttpsMetadata = false;
-                  x.SaveToken = true;
-                  x.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-                  {
-                      ValidateIssuerSigningKey = true,
-                      IssuerSigningKey = new SymmetricSecurityKey(_jwtsecertkey),
-                      ValidateIssuer = false,
-                      ValidateAudience = false
-                  };
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(JwtSecretKey),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    //ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero // NOTE: the default for this setting is 5 min
 
-                  x.Events = new JwtBearerEvents
-                  {
-                      OnAuthenticationFailed = context =>
-                      {
-                          if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
-                          {
-                              context.Response.Headers.Add("Token-Expired", "true");
-                          }
-                          return Task.CompletedTask;
-                      },
-                      OnMessageReceived = context =>
-                      {
-                          var accessToken = context.Request.Query["access_token"];
-                          var path = context.HttpContext.Request.Path;
-                          if (!string.IsNullOrEmpty(accessToken))
-                          {
-                              var token = JsonConvert.DeserializeObject<string>(accessToken.ToString()).Replace("Bearer ","");
-                              context.Token = token;
-                          }
-                          return Task.CompletedTask;
-                      }
-                  };
-              });
+                };
+                x.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                        {
+                            context.Response.Headers.Add("Token-Expired", "true");
+                        }
+
+                        return Task.CompletedTask;
+                    },
+
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        // NOTE: If the request is for our hub...
+                        var path = context.HttpContext.Request.Path;
+
+                        if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/hubs")))
+                        {
+                            // Read the token out of the query string
+                            var token = JsonConvert.DeserializeObject<string>(accessToken.ToString()).Replace("Bearer ", "");
+                            context.Token = token;
+                        }
+
+                        return Task.CompletedTask;
+                    },
+
+                    //OnTokenValidated = (ctx) =>
+                    //{
+                    //    return Task.CompletedTask;
+                    //}
+                };
+            });
         }
     }
 }

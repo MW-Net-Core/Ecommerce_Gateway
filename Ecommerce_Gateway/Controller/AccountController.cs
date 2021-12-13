@@ -9,9 +9,12 @@ using System.Net.Http;
 using Ecommerce_Gateway.Model;
 using Newtonsoft.Json;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Ecommerce_Gateway.Controller
 {
+
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
@@ -39,6 +42,7 @@ namespace Ecommerce_Gateway.Controller
         }
 
         [HttpPost("Register")]
+        [AllowAnonymous]
         public async Task<Response> Register(Register reg)
         {
 
@@ -89,6 +93,7 @@ namespace Ecommerce_Gateway.Controller
 
 
         [HttpPost("Login")]
+        [AllowAnonymous]
         public async Task<Response> Login(Login Log)
         {
             using (_http)
@@ -112,7 +117,7 @@ namespace Ecommerce_Gateway.Controller
                     if (result.IsSuccessStatusCode)
                     {
                         var response = result.Content.ReadAsStringAsync();//read the response send by the usermanagent api
-                        return new Response { status = "Succes", message = response.ToString() };   // required token here
+                        return new Response { status = "Succes", message = response.Result };   // required token here
                     }
                     //if case is some issue
                     else

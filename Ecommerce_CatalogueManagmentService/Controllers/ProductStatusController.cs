@@ -1,5 +1,6 @@
 ﻿using Ecommerce_CatalogueManagmentService.Business.BAL.Interface;
 using Ecommerce_CatalogueManagmentService.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce_CatalogueManagmentService.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductStatusController : ControllerBase

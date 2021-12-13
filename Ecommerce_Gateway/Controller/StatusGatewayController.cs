@@ -1,5 +1,6 @@
 ﻿using Ecommerce_Gateway.Model;
 using Ecommerce_Gateway.Utilities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce_Gateway.Controller
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class StatusGatewayController : ControllerBase
