@@ -121,7 +121,7 @@ namespace Ecommerce_Gateway
                 o.MemoryBufferThreshold = int.MaxValue;
             });
             //JWT from class library reference added
-            services.ConfigureJwtAuthentication(Configuration.GetValue<string>("AppSettings:Secret"));
+            services.ConfigureJwtAuthentication(Configuration.GetValue<string>("AppSettings:JWT_SECRET"));
 
             services.AddSession();
             services.AddSignalR();

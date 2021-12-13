@@ -15,6 +15,7 @@ using System.IO;
 using System;
 using System.Reflection;
 using Common;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Ecommerce_CatalogueManagmentService
 {
@@ -30,8 +31,7 @@ namespace Ecommerce_CatalogueManagmentService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-            services.AddControllers();
+            services.AddHttpContextAccessor();
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             
             services.AddTransient<IStatusManager, StatusManager>();
@@ -50,12 +50,18 @@ namespace Ecommerce_CatalogueManagmentService
 
             services.AddTransient<IProductStatusManager, ProductStatusManager>();
             services.AddTransient<IStatusProductRepository, StatusProductRepository>();
+
+            services.AddMvc();
+            services.AddControllers().AddNewtonsoftJson();
+
             // Set the comments path for the Swagger JSON and UI.
             var xmlPath = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
             services.AddSwaggerDocumentation("Ecommerce_CatalogueManagmentService", "v1", xmlPath);
 
+
+
             //JWT from class library reference added
-            services.ConfigureJwtAuthentication(Configuration.GetValue<string>("JWT:Secret"));
+            services.ConfigureJwtAuthentication(Configuration.GetValue<string>("AppSettings:JWT_SECRET"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -124,7 +124,7 @@ namespace Ecommerce_UserManagment
             //           ValidateAudience = true,
             //           ValidAudience = Configuration["JWT:ValidAudience"],
             //           ValidIssuer = Configuration["JWT:ValidIssuer"],
-            //           IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
+            //           IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["AppSettings:JWT_SECRET"]))
             //       };
             //   });
 
@@ -155,7 +155,7 @@ namespace Ecommerce_UserManagment
 
 
             //JWT from class library reference added
-            services.ConfigureJwtAuthentication(Configuration.GetValue<string>("JWT:Secret"));
+            services.ConfigureJwtAuthentication(Configuration.GetValue<string>("AppSettings:JWT_SECRET"));
 
             services.AddMvc();
             services.AddControllers();
