@@ -52,7 +52,7 @@ namespace Ecommerce_UserManagment.Controllers
             {
                 var result = new LoginResponseVM();
 
-                result.access_token = GenerateTokenAsync(user.Id, user.UserName, user.Email, user.Email, _configuration["JWT:Secret"].ToString(), 36000, user).Result;
+                result.access_token = GenerateTokenAsync(user.Id, user.UserName, user.Email, user.Email, _configuration["JWT:Secret"].ToString(), 3600, user).Result;
 
 
                 return Ok(result);
