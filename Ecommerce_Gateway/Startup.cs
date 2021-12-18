@@ -66,24 +66,15 @@ namespace Ecommerce_Gateway
 
             services.AddCors(options =>
             {
-                options.AddDefaultPolicy(
-                    builder =>
-                    {
-                        builder.WithOrigins(baseUrl)
-                                            .AllowAnyHeader()
-                                            .AllowAnyOrigin()
-                                            .AllowAnyMethod();
-                    });
-
-                options.AddPolicy("AnotherPolicy",
-                builder =>
-                {
-                    builder.WithOrigins(baseUrl)
-                                        .AllowAnyHeader()
-                                        .AllowAnyOrigin()
-                                        .AllowAnyMethod();
-                });
+                options.AddPolicy("CorsPolicy",
+                    builder => builder
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials()
+                    .SetIsOriginAllowed((hosts) => true));
             });
+
+            services.AddSignalR();
             #endregion
 
 
@@ -124,7 +115,6 @@ namespace Ecommerce_Gateway
             services.ConfigureJwtAuthentication(Configuration.GetValue<string>("AppSettings:JWT_SECRET"));
 
             services.AddSession();
-            services.AddSignalR();
             // Note: Added to allow image file uploading
             services.Configure<FormOptions>(o =>
             {
@@ -152,7 +142,7 @@ namespace Ecommerce_Gateway
             app.UseRouting();
 
             app.UseAuthorization();
-            app.UseCors();
+            app.UseCors("CorsPolicy");
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -165,9 +155,11 @@ namespace Ecommerce_Gateway
 
             app.UseEndpoints(endpoints =>
             {
-               // endpoints.MapHub<NotificationHub>("/hubs/notification");
+                // endpoints.MapHub<NotificationHub>("/hubs/notification");
+                endpoints.MapHub<InformHub>("/inform");
                 endpoints.MapControllers();
             });
+            
         }
     }
 }

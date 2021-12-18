@@ -52,7 +52,7 @@ namespace Ecommerce_CatalogueManagmentService
             services.AddTransient<IStatusProductRepository, StatusProductRepository>();
 
             services.AddMvc();
-            services.AddControllers().AddNewtonsoftJson();
+            services.AddControllers();
 
             // Set the comments path for the Swagger JSON and UI.
             var xmlPath = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");

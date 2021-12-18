@@ -4,26 +4,27 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Ecommerce_Gateway.Controller
 {
-    [Authorize]
+   // [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class StatusGatewayController : ControllerBase
     {
         private readonly IConfigurationServices _config;
         private readonly HttpClient _http;
+        private IHubContext<InformHub, IHubClient> _informHub;
 
         public StatusGatewayController(
           IHttpClientFactory clientFactory,
           IConfigurationServices configurationService,
           IHttpContextAccessor httpContextAccessor,
-          IHttpService httpServiceExtensions
+          IHttpService httpServiceExtensions,
+          IHubContext<InformHub, IHubClient> hubContext
         )
         {
             _config = configurationService;
@@ -33,6 +34,7 @@ namespace Ecommerce_Gateway.Controller
                 _http = httpServiceExtensions.InitializeConfiguration(clientFactory);
                 httpServiceExtensions.SetAuthorizationHeaderForHttpClient(httpContextAccessor);
             }
+            _informHub = hubContext;
         }
 
 
@@ -94,13 +96,6 @@ namespace Ecommerce_Gateway.Controller
                 }
             }
         }
- 
-
-
-
-         
         
-
-
     }
 }
