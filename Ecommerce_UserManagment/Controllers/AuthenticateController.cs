@@ -13,12 +13,15 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Security.Claims;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
 namespace Ecommerce_UserManagment.Controllers
 {
+
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthenticateController : ControllerBase
@@ -38,6 +41,7 @@ namespace Ecommerce_UserManagment.Controllers
         }
 
         //Action method for getting the token
+        [AllowAnonymous]
         [HttpPost]
         [Route("Login")]
 
@@ -46,42 +50,80 @@ namespace Ecommerce_UserManagment.Controllers
             var user = await userManager.FindByNameAsync(model.Username);
             if (user != null && await userManager.CheckPasswordAsync(user, model.Password))
             {
-                var userRoles = await userManager.GetRolesAsync(user);
+                var result = new LoginResponseVM();
 
-                var authClaims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(ClaimTypes.Email, user.Email),
-                    new Claim("UserId",user.Id),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                };
+                result.access_token = GenerateTokenAsync(user.Id, user.UserName, user.Email, user.Email, _configuration["AppSettings:JWT_SECRET"].ToString(), 3600, user).Result;
 
-                foreach (var userRole in userRoles)
-                {
-                    authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-                }
 
-                var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-
-                var token = new JwtSecurityToken(
-                    issuer: _configuration["JWT:ValidIssuer"],
-                    audience: _configuration["JWT:ValidAudience"],
-                    expires: DateTime.Now.AddHours(3),
-                    claims: authClaims,
-                    signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-                    );
-
-                //throwing the responsein the case of correct log in
-                return Ok(new
-                {
-                    token = new JwtSecurityTokenHandler().WriteToken(token),
-                    expiration = token.ValidTo
-                });
+                return Ok(result);
             }
             return Unauthorized();
         }
 
+
+        private async Task<string> GenerateTokenAsync(
+           string userId,
+           string userName,
+           string Name,
+           string Email,
+           string jwtSecret,
+           int jwtExpiry, ApplicationUser user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var userRoles = await userManager.GetRolesAsync(user);
+            var key = Encoding.ASCII.GetBytes(jwtSecret);
+
+
+
+            var identity = new ClaimsIdentity(authenticationType: "JWT");
+            identity.AddClaim(new Claim(ClaimTypes.Email, Email));
+            identity.AddClaim(new Claim("userId", userId));
+
+            foreach (var userRole in userRoles)
+            {
+                identity.AddClaim(new Claim(ClaimTypes.Role, userRole));
+            }
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(
+                identity
+                ),
+                Expires = DateTime.UtcNow.AddMinutes(jwtExpiry),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenResult = tokenHandler.WriteToken(token);
+            if (ValidateToken(tokenResult, jwtSecret))
+                return tokenResult;
+            return "";
+
+        }
+
+
+        private static bool ValidateToken(string authToken,string key)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var validationParameters = GetValidationParameters(key);
+
+            SecurityToken validatedToken;
+            IPrincipal principal = tokenHandler.ValidateToken(authToken, validationParameters, out validatedToken);
+            return true;
+        }
+        private static TokenValidationParameters GetValidationParameters(string key)
+        {
+            return new TokenValidationParameters()
+            {
+                ValidateLifetime = false, // Because there is no expiration in the generated token
+                ValidateAudience = false, // Because there is no audiance in the generated token
+                ValidateIssuer = false,   // Because there is no issuer in the generated token
+                ValidIssuer = "Sample",
+                ValidAudience = "Sample",
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)) // The same key as the one that generate the token
+            };
+        }
         //Action method for register a client type of user
+        [AllowAnonymous]
         [HttpPost]
         [Route("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
@@ -96,7 +138,7 @@ namespace Ecommerce_UserManagment.Controllers
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = model.Username,
                 AdditionalInformation = "This is additional information"
-               
+
             };
 
             string user_id = user.Id; //   for email might not be null
@@ -120,7 +162,7 @@ namespace Ecommerce_UserManagment.Controllers
 
             if (!await roleManager.RoleExistsAsync(UserRoles.User))
                 await roleManager.CreateAsync(new IdentityRole(UserRoles.User));
-          
+
 
             if (await roleManager.RoleExistsAsync(UserRoles.Admin))
             {
@@ -159,7 +201,7 @@ namespace Ecommerce_UserManagment.Controllers
 
             if (result.Succeeded)
             {
-                return Ok(new Response { Status="Success", Message = "Email confirmed" });
+                return Ok(new Response { Status = "Success", Message = "Email confirmed" });
             }
             else
             {
@@ -168,6 +210,7 @@ namespace Ecommerce_UserManagment.Controllers
         }
 
         //Action method for registeration of adminstrator
+        [AllowAnonymous]
         [HttpPost]
         [Route("register-admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
@@ -268,7 +311,7 @@ namespace Ecommerce_UserManagment.Controllers
         //delete user
         [HttpPost]
         [Route("delete-user")]
-        
+
         public async Task<ActionResult> DeleteUser(string userId)
         {
             if (userId == null)
@@ -316,7 +359,7 @@ namespace Ecommerce_UserManagment.Controllers
         {
             var role = await roleManager.FindByNameAsync(RoleName);
             var result = await roleManager.DeleteAsync(role);
-            if(result.Succeeded)
+            if (result.Succeeded)
                 return Ok(new Response { Status = "Sucess", Message = "Role deleted Sucessfully" });
             return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Role is not deleted Sucessfully" });
         }

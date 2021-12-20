@@ -8,14 +8,52 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Http.Features;
 using Ecommerce_Gateway.Utilities;
 using Common.Utility;
+using Common;
+using System;
+using System.Reflection;
+using System.IO;
 
 namespace Ecommerce_Gateway
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        /// <summary>
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <param name="env"></param>
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
-            Configuration = configuration;
+            // Note: configure appsettings.json according to specific environment
+            var contentRootPath = env.ContentRootPath;
+            var builder = new ConfigurationBuilder()
+                    .SetBasePath(contentRootPath);
+
+            if (env.IsDevelopment())
+            {
+                builder
+                    .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true)
+                    .AddEnvironmentVariables();
+
+                Configuration = builder.Build();
+            }
+
+            if (env.IsProduction())
+            {
+                builder
+                    .AddJsonFile("appsettings.Production.json", optional: true, reloadOnChange: true)
+                    .AddEnvironmentVariables();
+
+                Configuration = builder.Build();
+            }
+
+            if (env.IsStaging())
+            {
+                builder
+                    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                    .AddEnvironmentVariables();
+
+                Configuration = builder.Build();
+            }
         }
 
         public IConfiguration Configuration { get; }
@@ -24,39 +62,30 @@ namespace Ecommerce_Gateway
         public void ConfigureServices(IServiceCollection services)
         {
             #region //Allow origin
-            //var baseUrl = Configuration.GetValue<string>("AppSettings:WebBaseUri");
+            var baseUrl = Configuration.GetValue<string>("AppSettings:WebBaseUri");
 
-            //services.AddCors(options =>
-            //{
-            //    options.AddDefaultPolicy(
-            //        builder =>
-            //        {
-            //            builder.WithOrigins(baseUrl)
-            //                                .AllowAnyHeader()
-            //                                .AllowAnyOrigin()
-            //                                .AllowAnyMethod();
-            //        });
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials()
+                    .SetIsOriginAllowed((hosts) => true));
+            });
 
-            //    options.AddPolicy("AnotherPolicy",
-            //    builder =>
-            //    {
-            //        builder.WithOrigins(baseUrl)
-            //                            .AllowAnyHeader()
-            //                            .AllowAnyOrigin()
-            //                            .AllowAnyMethod();
-            //    });
-            //});
+            services.AddSignalR();
             #endregion
 
 
 
-
+            services.AddHttpContextAccessor();
             services.AddControllers();
-           
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ecommerce_Gateway", Version = "v1" });
-            });
+
+            // Set the comments path for the Swagger JSON and UI.
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
+            services.AddSwaggerDocumentation("Ecommerce_Gateway", "v1", xmlPath);
+
             services.AddHttpContextAccessor();
             services.AddTransient<IConfigurationServices, ConfigurationServices>();
             services.AddTransient<IHttpService, HttpService>();
@@ -67,19 +96,25 @@ namespace Ecommerce_Gateway
                 options.Filters.Add(new ProducesAttribute("application/json"));
                 //options.Filters.Add(new AuditLoggingFilter());
             })
-                .AddNewtonsoftJson()
-                .AddJsonOptions(opt =>
-                {
-                    opt.JsonSerializerOptions.PropertyNamingPolicy = null;
-                });
+               .AddNewtonsoftJson()
+               .AddJsonOptions(opt =>
+               {
+                   opt.JsonSerializerOptions.PropertyNamingPolicy = null;
+               });
 
             services.AddControllers().AddNewtonsoftJson();
 
-
+            // Note: Added to allow image file uploading
+            services.Configure<FormOptions>(o =>
+            {
+                o.ValueLengthLimit = int.MaxValue;
+                o.MultipartBodyLengthLimit = int.MaxValue;
+                o.MemoryBufferThreshold = int.MaxValue;
+            });
             //JWT from class library reference added
-            services.ConfigureJwtAuthentication(Configuration.GetValue<string>("AppSettings:Secret"));
+            services.ConfigureJwtAuthentication(Configuration.GetValue<string>("AppSettings:JWT_SECRET"));
 
-
+            services.AddSession();
             // Note: Added to allow image file uploading
             services.Configure<FormOptions>(o =>
             {
@@ -93,11 +128,12 @@ namespace Ecommerce_Gateway
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseSwaggerDocumentation("/swagger/v1/swagger.json", "Ecommerce_Gateway v1");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce_Gateway v1"));
+                //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce_Gateway v1"));
 
             }
 
@@ -106,11 +142,24 @@ namespace Ecommerce_Gateway
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseCors("CorsPolicy");
+
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            app.UseCookiePolicy();
+            app.UseRouting();
+            app.UseSession();
+            app.UseAuthentication();
             app.UseCors();
+            app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
+                // endpoints.MapHub<NotificationHub>("/hubs/notification");
+                endpoints.MapHub<InformHub>("/inform");
                 endpoints.MapControllers();
             });
+            
         }
     }
 }

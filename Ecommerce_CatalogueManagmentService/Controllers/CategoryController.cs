@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 using Ecommerce_CatalogueManagmentService.Business.BAL;
 using Ecommerce_CatalogueManagmentService.Models;
 using System.Threading;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Ecommerce_CatalogueManagmentService.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase

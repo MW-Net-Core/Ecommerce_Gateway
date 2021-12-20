@@ -11,6 +11,11 @@ using Ecommerce_CatalogueManagmentService.Business.BAL;
 using Ecommerce_CatalogueManagmentService.Repository.DAL.Interfaces;
 using Ecommerce_CatalogueManagmentService.Repository.DAL;
 using Common.Utility;
+using System.IO;
+using System;
+using System.Reflection;
+using Common;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Ecommerce_CatalogueManagmentService
 {
@@ -26,8 +31,7 @@ namespace Ecommerce_CatalogueManagmentService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-            services.AddControllers();
+            services.AddHttpContextAccessor();
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             
             services.AddTransient<IStatusManager, StatusManager>();
@@ -47,28 +51,28 @@ namespace Ecommerce_CatalogueManagmentService
             services.AddTransient<IProductStatusManager, ProductStatusManager>();
             services.AddTransient<IStatusProductRepository, StatusProductRepository>();
 
+            services.AddMvc();
+            services.AddControllers();
+
+            // Set the comments path for the Swagger JSON and UI.
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
+            services.AddSwaggerDocumentation("Ecommerce_CatalogueManagmentService", "v1", xmlPath);
 
 
 
             //JWT from class library reference added
-            services.ConfigureJwtAuthentication(Configuration.GetValue<string>("JWT:Secret"));
-
-
-
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ecommerce_CatalogueManagmentService", Version = "v1" });
-            });
+            services.ConfigureJwtAuthentication(Configuration.GetValue<string>("AppSettings:JWT_SECRET"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseSwaggerDocumentation("/swagger/v1/swagger.json", "Ecommerce_CatalogueManagmentService v1");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce_CatalogueManagmentService v1"));
+              //  app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce_CatalogueManagmentService v1"));
             }
 
             app.UseHttpsRedirection();

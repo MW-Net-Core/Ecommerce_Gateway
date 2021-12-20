@@ -9,9 +9,11 @@ using Ecommerce_CatalogueManagmentService.Models;
 using Ecommerce_CatalogueManagmentService.Repository.DAL;
 using Ecommerce_CatalogueManagmentService.Business.BAL.Interface;
 using Ecommerce_CatalogueManagmentService.Repository.DAL.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Ecommerce_CatalogueManagmentService.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryStatusController : ControllerBase
