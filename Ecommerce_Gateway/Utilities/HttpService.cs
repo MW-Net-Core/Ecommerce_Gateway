@@ -17,6 +17,7 @@ namespace Ecommerce_Gateway.Utilities
         }
 
 
+
         public void SetAuthorizationHeaderForHttpClient(IHttpContextAccessor httpContextAccessor)
         {
             if (httpContextAccessor != null && httpContextAccessor.HttpContext != null)

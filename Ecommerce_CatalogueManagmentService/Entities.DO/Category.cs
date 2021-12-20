@@ -13,5 +13,6 @@ namespace Ecommerce_CatalogueManagmentService.Entities.DO
         public string CategoryName { get; set; }
         public string CategoryDescription { get; set; }
         public virtual CategoryStatus CategoryStatus { get; set; }
+        public virtual ICollection<ProductCategory> ProductCategory { get; set; }
     }
 }

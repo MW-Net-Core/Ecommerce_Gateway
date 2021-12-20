@@ -19,8 +19,6 @@ using System.Web;
 
 namespace Ecommerce_UserManagment.Controllers
 {
-
-    
     [Route("api/[controller]")]
     [ApiController]
     public class AuthenticateController : ControllerBase
@@ -322,10 +320,5 @@ namespace Ecommerce_UserManagment.Controllers
                 return Ok(new Response { Status = "Sucess", Message = "Role deleted Sucessfully" });
             return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Role is not deleted Sucessfully" });
         }
-
-
-
-
-
     }
 }

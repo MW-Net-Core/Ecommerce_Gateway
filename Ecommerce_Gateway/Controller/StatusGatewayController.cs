@@ -17,6 +17,8 @@ namespace Ecommerce_Gateway.Controller
         private readonly IConfigurationServices _config;
         private readonly HttpClient _http;
 
+
+
         public StatusGatewayController(
           IHttpClientFactory clientFactory,
           IConfigurationServices configurationService,
